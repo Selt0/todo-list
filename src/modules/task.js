@@ -2,18 +2,11 @@ class Task {
     constructor(title, dateCreated){
         this.title = title
         this.dateCreated = dateCreated
-    }
-
-    getTitle(){
-        return this.title
+        this.completed = false
     }
 
     setTitle(value){
          this.title = value
-    }
-
-    getDateCreated(){
-        return this.dateCreated
     }
 
     getDueDate(){
@@ -31,12 +24,16 @@ class Task {
     setPriority(value){
         this.priority = value
     }
+
+    getProject(){
+        if (this.project) return this.project
+    }
     
     setProject(project){
         this.project = project
     }
 
-    getProject(){
-        if (this.project) return this.project
+    setComplete(){
+        this.completed = true
     }
 }
