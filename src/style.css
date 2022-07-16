@@ -119,6 +119,11 @@
     margin-bottom: 30px;
 }
 
+.tasks-container .card:hover {
+    background-color: var(--active-hover);
+    cursor: pointer;
+}   
+
 .tasks-container > p,
 .completed-tasks > p {
     margin-bottom: 10px;
