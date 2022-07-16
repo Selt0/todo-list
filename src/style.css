@@ -1,0 +1,9 @@
+.main {
+    display: flex;
+}
+
+.sidebar {
+    min-width: 200px;
+    width: 300px;
+    padding: 25px;
+}
