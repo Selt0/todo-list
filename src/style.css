@@ -1,9 +1,173 @@
+:root {
+    --secondary-dark: #21212b;
+    --main-dark: #181820;
+    --pink: #fc76a1;
+    --main-text-color: #d5d5d7;
+    --secondary-text-color: #a7a7ab;
+    --project-text-color: #e2e2e3;
+    --active: #383846;
+    --active-hover: #272732;
+}
+* {
+    padding: 0;
+    margin: 0;
+}
+
 .main {
+    font-size: 18px;
     display: flex;
+    height: 100vh;
+    background-color: var(--main-dark);
 }
 
 .sidebar {
+    background-color: var(--secondary-dark);
     min-width: 200px;
     width: 300px;
+    color: var(--project-text-color)
+}
+
+.sidebar h2 {
+     margin: 25px;
+    color: var(--secondary-text-color);
+}
+
+.project {
+    display: flex;
     padding: 25px;
+    justify-content: space-between;
+}
+
+.project:hover {
+    cursor: pointer;
+    background-color: var(--active-hover);
+}
+
+.project:hover .project-buttons{
+    display: block;
+}
+
+.active {
+    background-color: var(--active);
+}
+
+.sidebar .project-title {
+    margin-left: 10px;
+    margin-right: 10px;
+    font-weight: 700;
+}
+
+.project-buttons {
+    display: none;
+    align-self: flex-end;
+}
+
+.project-buttons i:first-child {
+    margin-right: 10px;
+}
+
+.add-project {
+    display: flex;
+    padding: 25px;
+}
+
+.btn {
+    display: flex;
+    align-items: center;
+    border: 2px solid var(--secondary-dark);
+    padding: 15px;
+    background-color: var(--main-dark);
+    color: var(--main-text-color);
+    cursor: pointer;
+    border-radius: 10px;
+}
+
+.btn:hover {
+    background-color: var(--active-hover);
+}
+.add-icon {
+    width: 30px;
+    height: 30px;
+    color: var(--main-dark);
+    background-color: var(--pink);
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 10px;
+}
+
+.tasks {
+    color: var(--main-text-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin-top: 100px;
+}
+
+.container {
+    width: 60%;
+}
+
+.title {
+    color: #fff;
+    margin-bottom: 30px;
+}
+
+.tasks-container {
+    margin-bottom: 30px;
+}
+
+.tasks-container > p,
+.completed-tasks > p {
+    margin-bottom: 10px;
+}
+
+.card {
+    display: flex;
+    background-color: var(--secondary-dark);
+    border-radius: 15px;
+    margin-bottom: 10px;
+    padding: 15px;
+}
+
+.add-task  .btn{
+    width: 100%;
+}
+
+.add-task {
+    padding: 0;
+    margin-bottom: 30px;
+}
+
+.checkbox {
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--pink);
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+.checkbox:hover {
+    cursor: pointer;
+}
+
+.checked {
+    color: var(--main-dark);
+    background-color: var(--pink);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.completed {
+    text-decoration: line-through;
+    text-decoration-color: #fff;
+    text-decoration-thickness: 1.5px;
+}
+
+.task-details {
+    font-size: .9rem;
+    color: var(--secondary-text-color);
 }
