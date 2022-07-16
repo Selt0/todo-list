@@ -8,37 +8,50 @@ const DOM = (() => {
     const addTaskBtn = document.querySelector('#add-task')
 
    function initListeners(){
-        addProjectBtn.addEventListener('click', displayProjectForm)
+        addProjectBtn.addEventListener('click', () => { displayForm('project') })
         projectList.addEventListener('click', loadProjectTasks)
-        addTaskBtn.addEventListener('click', addTask)
+        addTaskBtn.addEventListener('click', () => { displayForm('task') })
     }
 
-    function displayProjectForm(){
-        const form = document.querySelector('#projectForm')
+    function displayForm(type){
+        const form = document.querySelector(`#${type}Form`)
         if (form) return
-        projectContainer.insertBefore(createProjectForm(), addProjectBtn)
+
+        type === 'project' ? projectContainer.insertBefore(createForm(type), addProjectBtn) :
+                             taskContainer.insertBefore(createForm(type), addTaskBtn)
     }
 
-    function createProjectForm(){
+    function createForm(type){
         const form = document.createElement('form')
-        form.id = 'projectForm'
+        form.id = `${type}Form`
+
         const input = document.createElement('input')
-        input.id = 'projectTitleInput'
+        input.id = `${type}TitleInput`
         input.type = 'text'
-        input.placeholder = "Enter project's title"
+        input.placeholder = `Enter ${type}`
         form.appendChild(input)
 
         const submitBtn = document.createElement('button')
         submitBtn.textContent = 'Add'
-        submitBtn.addEventListener('click', addProject)
         form.appendChild(submitBtn)
 
         const cancelBtn = document.createElement('button')
         cancelBtn.textContent = 'Cancel'
-        cancelBtn.addEventListener('click', removeForm)
         form.appendChild(cancelBtn)
 
-        return form
+       if (type == 'project') {
+        submitBtn.addEventListener('click', addProject)
+        cancelBtn.addEventListener('click', () => { removeForm('project') })
+       } else {
+        submitBtn.addEventListener('click', addTask)
+        cancelBtn.addEventListener('click', () => { removeForm('task') })
+       }
+
+       return form
+    }
+
+    function removeForm(type){
+        document.querySelector(`#${type}Form`).remove()
     }
 
     function addProject(e){
@@ -47,19 +60,19 @@ const DOM = (() => {
         if (Project.allProjects.includes(projectTitle)){
             alert('Name is already in use')
             return false
+        } else if (!projectTitle) {
+            alert('Please give the project a name')
+            return false 
         } else {
             removeForm()
         }
+
         const project = new Project(projectTitle)
         
         const li = document.createElement('li')
         li.classList.add('project')
         li.textContent = project.title
         projectList.appendChild(li)
-    }
-
-    function removeForm(){
-        document.querySelector('#projectForm').remove()
     }
 
     function loadProjectTasks(e){
