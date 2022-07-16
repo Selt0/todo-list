@@ -1,4 +1,6 @@
 import { Project } from './project'
+import { format } from 'date-fns'
+import { Task } from './task'
 
 const DOM = (() => {
     const projectContainer = document.querySelector('.projects-container')
@@ -64,7 +66,7 @@ const DOM = (() => {
             alert('Please give the project a name')
             return false 
         } else {
-            removeForm()
+            removeForm('project')
         }
 
         const project = new Project(projectTitle)
@@ -90,8 +92,22 @@ const DOM = (() => {
         }
     }
 
-    function addTask(){
-        console.log('click')
+    function addTask(e){
+        e.preventDefault()
+        const taskTitle = document.querySelector('#taskTitleInput').value.trim()
+
+        if (!taskTitle){
+            alert('Please give the task a name')
+            return false
+        } else {
+            removeForm('task')
+        }
+        const task = new Task(taskTitle)
+        console.log(task.id)
+
+        const div = document.createElement('div')
+        div.textContent = task.title
+        taskContainer.insertBefore(div, addTaskBtn)
     }
 
     return {

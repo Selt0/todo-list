@@ -1,8 +1,10 @@
+let taskID = 0
+
 class Task {
-    constructor(title, dateCreated){
+    constructor(title){
         this.title = title
-        this.dateCreated = dateCreated
         this.completed = false
+        this.id = taskID++
     }
 
     setTitle(value){
@@ -37,3 +39,5 @@ class Task {
         this.completed = true
     }
 }
+
+export { Task }
