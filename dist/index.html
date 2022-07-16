@@ -2,10 +2,29 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>Getting Started</title>
+    <title>Todo App</title>
     <script src="https://unpkg.com/lodash@4.17.20"></script>
   </head>
   <body>
+    <div class="main">
+      <div class="sidebar">
+        <h2>Projects</h2>
+        <div class="projects-container">
+          <ul class="projects">
+          </ul>
+        <button id="add-project">Add Project</button>
+        </div>
+      </div>
+      <section class="tasks-todo">
+        <h1 class="project-title"></h1>
+        <h3>Tasks - <span class="total-tasks"></span></h3>
+        <div class="task-container">
+
+          <button id="add-task">Add a new Task</button>
+        </div>
+      </section> 
+
+    </div>
     <script src="main.js"></script>
   </body>
 </html>
