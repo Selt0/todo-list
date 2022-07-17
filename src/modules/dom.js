@@ -6,24 +6,17 @@ const DOM = (() => {
     const projectContainer = document.querySelector('.project-container')
     const addProjectContainer = document.querySelector('.add-project')
     const addProjectBtn = document.querySelector('#add-project')
-    const tasksContainer = document.querySelector('tasks-container')
+    const tasksContainer = document.querySelector('.tasks-container')
     const completedContainer = document.querySelector('.completed-tasks')
 
 
     function initListeners(){
         projectContainer.addEventListener('click', loadProjectEvent)
-        addProjectBtn.addEventListener('click', renderProjectForm)
+        addProjectBtn.addEventListener('click', renderNewProjectForm)
     }
 
     function loadProjectEvent(e){
-        if (e.target.classList.contains('fa-pen-to-square')){
-            console.log('editing')
-        } else if (e.target.classList.contains('fa-xmark')){
-            console.log('deleting')
-        } else {
-            let project =  e.target.innerText.trim()
-            project = Project.getProject(project)
-        }
+            setActiveProject(e.target)
     }
 
     function renderProjectList(){
@@ -52,31 +45,18 @@ const DOM = (() => {
 
         const span = document.createElement('span')
         span.classList.add('project-title')
-        span.textContent = project.title
+        span.textContent = capitalizeString(project.title)
         projectInfo.append(span)
-
-        div.append(renderProjectButtons())
     }
 
-    function renderProjectButtons() {
-        const div = document.createElement('div')
-        div.classList.add('project-buttons')
+    function setActiveProject(node){
+        const oldActive = document.querySelector('.active')
+        oldActive.classList.toggle('active')
 
-        const editIcon = document.createElement('i')
-        editIcon.classList.add('fa-solid', 'fa-pen-to-square')
-        div.append(editIcon)
-
-        const deleteIcon = document.createElement('i')
-        deleteIcon.classList.add('fa-solid', 'fa-xmark')
-        div.append(deleteIcon)
-
-        console.log(div)
-        return div
-    }
-
-    function setActiveProject(project){
-        project.classList.add('active')
-        // clearTasks()
+        node.classList.add('active')
+        clearTasks()
+        let project = Project.getProject(node.dataset.projectTitle)
+        console.log(project)
         renderProjectsTask(project)
     }
 
@@ -87,12 +67,12 @@ const DOM = (() => {
 
     function renderProjectsTask(project){
         const title = document.querySelector('h1.project-title')
-        title.textContent = project.title
+        title.textContent = capitalizeString(project.title)
 
         const totalTasks = document.querySelector('.total-tasks')
         totalTasks.textContent = project.todoLength
 
-        const completedTasks = document.querySelector('.completed-tasks')
+        const completedTasks = document.querySelector('.total-completed-tasks')
         completedTasks.textContent = project.completedLength
 
         renderUncompletedTasks(project)
@@ -166,26 +146,27 @@ const DOM = (() => {
         return div
     }
 
-    function renderProjectForm(){
+    function renderNewProjectForm(){
         addProjectBtn.style.display = 'none'
-        const div = document.createElement('div')
-        div.classList.add('projectForm')
-        addProjectContainer.append(div)
+        
+        const form = document.createElement('form')
+        form.classList.add('projectForm')
+        addProjectContainer.append(form)
 
         const input = document.createElement('input')
         input.type = 'text'
         input.placeholder = 'Enter project'
         input.classList.add('project-input')
-        div.append(input)
+        form.append(input)
 
         const addProjectBtns = document.createElement('div')
-        addProjectBtns.classList.add('add-project-btns')
-        div.append(addProjectBtns)
+        addProjectBtns.classList.add('popout-project-btns')
+        form.append(addProjectBtns)
 
         const addBtn = document.createElement('button')
         addBtn.textContent = 'Add'
         addBtn.classList.add('popout-add-project-btn')
-        addBtn.addEventListener('click', () => { createNewProject(input.value)})
+        addBtn.addEventListener('click', (e) => { createNewProject(input.value, e)})
         addProjectBtns.append(addBtn)
 
         const cancelBtn = document.createElement('button')
@@ -195,20 +176,20 @@ const DOM = (() => {
         addProjectBtns.append(cancelBtn)
     }
 
-    function createNewProject(project){
-        console.log(project)
+    function createNewProject(project, e){
+        e.preventDefault()
+
         if (!project){
             alert('Please enter a name for your project')
-            return
+            return false
         } else if (Project.containsProject(project)){
             alert('Name is already in use')
-            return
+            return false
         }
 
         const newProject = new Project(project)
         renderSingleProject(newProject)
         removeProjectForm()
-
     }
 
     function removeProjectForm(){
@@ -217,6 +198,11 @@ const DOM = (() => {
         addProjectBtn.style.display = 'flex'
     }
 
+    function capitalizeString(string){
+        let stringArr = string.split(' ')
+        return stringArr.map(word => word[0].toUpperCase() + word.slice(1)).join(' ')
+    }
+    
     return {
         initListeners
     }
