@@ -78,6 +78,20 @@
 .btn:hover {
     background-color: var(--active-hover);
 }
+
+.project:hover .project-buttons{
+    display: block;
+}
+
+.project-buttons {
+    display: none;
+    align-self: flex-end;
+}
+
+.project-buttons i:hover {
+ color: var(--pink)
+}
+
 .add-icon {
     width: 30px;
     height: 30px;

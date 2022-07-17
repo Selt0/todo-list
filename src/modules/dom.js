@@ -15,8 +15,14 @@ const DOM = (() => {
         addProjectBtn.addEventListener('click', renderNewProjectForm)
     }
 
+    // PROJECT FUNCTIONS
+
     function loadProjectEvent(e){
+        if (e.target.classList.contains('fa-xmark')){
+            deleteProject(e.target.parentElement.parentElement)
+        } else {
             setActiveProject(e.target)
+        }
     }
 
     function renderProjectList(){
@@ -47,6 +53,18 @@ const DOM = (() => {
         span.classList.add('project-title')
         span.textContent = capitalizeString(project.title)
         projectInfo.append(span)
+
+        div.append(renderProjectButtons())
+    }
+
+    function renderProjectButtons() {
+        const div = document.createElement('div')
+        div.classList.add('project-buttons')
+
+        const deleteIcon = document.createElement('i')
+        deleteIcon.classList.add('fa-solid', 'fa-xmark')
+        div.append(deleteIcon)
+        return div
     }
 
     function setActiveProject(node){
@@ -60,10 +78,68 @@ const DOM = (() => {
         renderProjectsTask(project)
     }
 
-    function clearTasks(){
-        tasksContainer.innerHTML = ''
-        completedContainer.innerHTML = ''
+    function renderNewProjectForm(){
+        addProjectBtn.style.display = 'none'
+        
+        const form = document.createElement('form')
+        form.classList.add('projectForm')
+        addProjectContainer.append(form)
+
+        const input = document.createElement('input')
+        input.type = 'text'
+        input.placeholder = 'Enter project'
+        input.classList.add('project-input')
+        form.append(input)
+
+        const addProjectBtns = document.createElement('div')
+        addProjectBtns.classList.add('popout-project-btns')
+        form.append(addProjectBtns)
+
+        const addBtn = document.createElement('button')
+        addBtn.textContent = 'Add'
+        addBtn.classList.add('popout-add-project-btn')
+        addBtn.addEventListener('click', (e) => { createNewProject(input.value, e)})
+        addProjectBtns.append(addBtn)
+
+        const cancelBtn = document.createElement('button')
+        cancelBtn.textContent = 'Cancel'
+        cancelBtn.classList.add('popout-cancel-project-btn')
+        cancelBtn.addEventListener('click', removeProjectForm)
+        addProjectBtns.append(cancelBtn)
     }
+
+    function createNewProject(project, e){
+        e.preventDefault()
+
+        if (!project){
+            alert('Please enter a name for your project')
+            return false
+        } else if (Project.containsProject(project)){
+            alert('Name is already in use')
+            return false
+        }
+
+        const newProject = new Project(project)
+        renderSingleProject(newProject)
+        removeProjectForm()
+    }
+
+    function removeProjectForm(){
+        const form = document.querySelector('.projectForm')
+        form.remove()
+        addProjectBtn.style.display = 'flex'
+    }
+
+    function deleteProject(node){
+        console.log(Project.allProjects)
+
+        const project = Project.getProject(node.dataset.projectTitle)
+        Project.removeProject(project.title)
+        node.remove()
+        console.log(Project.allProjects)
+    }
+
+    // TASK FUNCTIONS
 
     function renderProjectsTask(project){
         const title = document.querySelector('h1.project-title')
@@ -146,63 +222,19 @@ const DOM = (() => {
         return div
     }
 
-    function renderNewProjectForm(){
-        addProjectBtn.style.display = 'none'
-        
-        const form = document.createElement('form')
-        form.classList.add('projectForm')
-        addProjectContainer.append(form)
-
-        const input = document.createElement('input')
-        input.type = 'text'
-        input.placeholder = 'Enter project'
-        input.classList.add('project-input')
-        form.append(input)
-
-        const addProjectBtns = document.createElement('div')
-        addProjectBtns.classList.add('popout-project-btns')
-        form.append(addProjectBtns)
-
-        const addBtn = document.createElement('button')
-        addBtn.textContent = 'Add'
-        addBtn.classList.add('popout-add-project-btn')
-        addBtn.addEventListener('click', (e) => { createNewProject(input.value, e)})
-        addProjectBtns.append(addBtn)
-
-        const cancelBtn = document.createElement('button')
-        cancelBtn.textContent = 'Cancel'
-        cancelBtn.classList.add('popout-cancel-project-btn')
-        cancelBtn.addEventListener('click', removeProjectForm)
-        addProjectBtns.append(cancelBtn)
+    function clearTasks(){
+        tasksContainer.innerHTML = ''
+        completedContainer.innerHTML = ''
     }
 
-    function createNewProject(project, e){
-        e.preventDefault()
-
-        if (!project){
-            alert('Please enter a name for your project')
-            return false
-        } else if (Project.containsProject(project)){
-            alert('Name is already in use')
-            return false
-        }
-
-        const newProject = new Project(project)
-        renderSingleProject(newProject)
-        removeProjectForm()
-    }
-
-    function removeProjectForm(){
-        const form = document.querySelector('.projectForm')
-        form.remove()
-        addProjectBtn.style.display = 'flex'
-    }
+    
+    // HELPER FUNCTIONS
 
     function capitalizeString(string){
         let stringArr = string.split(' ')
         return stringArr.map(word => word[0].toUpperCase() + word.slice(1)).join(' ')
     }
-    
+
     return {
         initListeners
     }
