@@ -11,6 +11,7 @@
 * {
     padding: 0;
     margin: 0;
+    box-sizing: border-box;
 }
 
 .main {
@@ -68,6 +69,7 @@
 
 .add-project {
     display: flex;
+    flex-direction: column;
     padding: 25px;
 }
 
@@ -110,7 +112,7 @@
     width: 60%;
 }
 
-.title {
+.tasks .project-title {
     color: #fff;
     margin-bottom: 30px;
 }
@@ -119,15 +121,15 @@
     margin-bottom: 30px;
 }
 
+.counter {
+    margin-bottom: 15px;
+}
+
 .tasks-container .card:hover {
     background-color: var(--active-hover);
     cursor: pointer;
 }   
 
-.tasks-container > p,
-.completed-tasks > p {
-    margin-bottom: 10px;
-}
 
 .card {
     display: flex;
@@ -176,3 +178,32 @@
     font-size: .9rem;
     color: var(--secondary-text-color);
 }
+
+.fa-book-open {
+    pointer-events: none;
+}
+
+.projectForm {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.project-input {
+    height: 35px;
+    padding: 5px;
+    margin-bottom: 10px;
+}
+
+.add-project-btns {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+}
+
+.add-project-btns button {
+    width: 60px;
+    height: 30px;
+    padding: 5px;
+}
+
