@@ -3,115 +3,222 @@ import { format } from 'date-fns'
 import { Task } from './task'
 
 const DOM = (() => {
-    const projectContainer = document.querySelector('.projects-container')
-    const projectList = document.querySelector('.projects')
-    const taskContainer = document.querySelector('.task-container')
+    const projectContainer = document.querySelector('.project-container')
+    const addProjectContainer = document.querySelector('.add-project')
     const addProjectBtn = document.querySelector('#add-project')
-    const addTaskBtn = document.querySelector('#add-task')
+    const tasksContainer = document.querySelector('tasks-container')
+    const completedContainer = document.querySelector('.completed-tasks')
 
-   function initListeners(){
-        addProjectBtn.addEventListener('click', () => { displayForm('project') })
-        projectList.addEventListener('click', loadProjectTasks)
-        addTaskBtn.addEventListener('click', () => { displayForm('task') })
+
+    function initListeners(){
+        projectContainer.addEventListener('click', loadProjectEvent)
+        addProjectBtn.addEventListener('click', renderProjectForm)
     }
 
-    function displayForm(type){
-        const form = document.querySelector(`#${type}Form`)
-        if (form) return
-
-        type === 'project' ? projectContainer.insertBefore(createForm(type), addProjectBtn) :
-                             taskContainer.insertBefore(createForm(type), addTaskBtn)
+    function loadProjectEvent(e){
+        if (e.target.classList.contains('fa-pen-to-square')){
+            console.log('editing')
+        } else if (e.target.classList.contains('fa-xmark')){
+            console.log('deleting')
+        } else {
+            let project =  e.target.innerText.trim()
+            project = Project.getProject(project)
+        }
     }
 
-    function createForm(type){
-        const form = document.createElement('form')
-        form.id = `${type}Form`
+    function renderProjectList(){
+        const projects = Project.allProjects
+
+        for (const project of projects){
+            renderSingleProject(project)
+        } 
+        
+        setActiveProject(document.querySelector('.project'))
+    }
+
+    function renderSingleProject(project){
+        const div = document.createElement('div')
+        div.classList.add('project')
+        div.dataset.projectTitle = project.title
+        projectContainer.append(div)
+
+        const projectInfo = document.createElement('div')
+        projectInfo.classList.add('project-info')
+        div.append(projectInfo)
+
+        const icon = document.createElement('i')
+        icon.classList.add('fa-solid', 'fa-book-open')
+        projectInfo.append(icon)
+
+        const span = document.createElement('span')
+        span.classList.add('project-title')
+        span.textContent = project.title
+        projectInfo.append(span)
+
+        div.append(renderProjectButtons())
+    }
+
+    function renderProjectButtons() {
+        const div = document.createElement('div')
+        div.classList.add('project-buttons')
+
+        const editIcon = document.createElement('i')
+        editIcon.classList.add('fa-solid', 'fa-pen-to-square')
+        div.append(editIcon)
+
+        const deleteIcon = document.createElement('i')
+        deleteIcon.classList.add('fa-solid', 'fa-xmark')
+        div.append(deleteIcon)
+
+        console.log(div)
+        return div
+    }
+
+    function setActiveProject(project){
+        project.classList.add('active')
+        // clearTasks()
+        renderProjectsTask(project)
+    }
+
+    function clearTasks(){
+        tasksContainer.innerHTML = ''
+        completedContainer.innerHTML = ''
+    }
+
+    function renderProjectsTask(project){
+        const title = document.querySelector('h1.project-title')
+        title.textContent = project.title
+
+        const totalTasks = document.querySelector('.total-tasks')
+        totalTasks.textContent = project.todoLength
+
+        const completedTasks = document.querySelector('.completed-tasks')
+        completedTasks.textContent = project.completedLength
+
+        renderUncompletedTasks(project)
+        renderCompletedTasks(project)
+    }
+
+    function renderUncompletedTasks(project){
+        const tasks = project.todoTasks
+
+        for (const task of tasks){
+            tasksContainer.append(renderTask(task))
+        }
+    }
+
+    function renderCompletedTasks(project){
+        const tasks = project.completedTasks
+
+        for (const task of tasks){
+            completedContainer.append(renderTask(task))
+        }
+    }
+
+    function renderTask(task){
+        const card = document.createElement('div')
+        card.classList.add('card')
+
+        const checkbox = document.createElement('div')
+        checkbox.classList.add('checkbox')
+        card.append(checkbox)
+
+        const taskInfo = document.createElement('div')
+        taskInfo.classList.add('task-info')
+        card.append(taskInfo)
+
+        const taskTitle = document.createElement('p')
+        taskTitle.classList.add('task-title')
+        taskTitle.textContent = task.title
+        taskInfo.append(taskTitle)
+
+        if (task.completed){
+            checkbox.classList.add('checked')
+            taskTitle.classList.add('completed')
+
+            const icon = document.createElement('i')
+            icon.classList.add('fa-solid', 'fa-check')
+            checkbox.append(icon)
+        }
+
+        taskInfo.append(renderTaskDetails(task))
+
+        return card
+    }
+
+    function renderTaskDetails(task){
+        const div = document.createElement('div')
+        div.classList.add('task-details')
+
+        const dueDate = document.createElement('div')
+        dueDate.classList.add('due-date')
+        div.append(dueDate)
+
+        const icon = document.createElement('i')
+        icon.classList.add('fa-solid', 'fa-calendar')
+        dueDate.append(icon)
+
+        const day = document.createElement('span')
+        day.classList.add('day')
+        day.textContent = 'due soon'
+        dueDate.append(day)
+
+        return div
+    }
+
+    function renderProjectForm(){
+        addProjectBtn.style.display = 'none'
+        const div = document.createElement('div')
+        div.classList.add('projectForm')
+        addProjectContainer.append(div)
 
         const input = document.createElement('input')
-        input.id = `${type}TitleInput`
         input.type = 'text'
-        input.placeholder = `Enter ${type}`
-        form.appendChild(input)
+        input.placeholder = 'Enter project'
+        input.classList.add('project-input')
+        div.append(input)
 
-        const submitBtn = document.createElement('button')
-        submitBtn.textContent = 'Add'
-        form.appendChild(submitBtn)
+        const addProjectBtns = document.createElement('div')
+        addProjectBtns.classList.add('add-project-btns')
+        div.append(addProjectBtns)
+
+        const addBtn = document.createElement('button')
+        addBtn.textContent = 'Add'
+        addBtn.classList.add('popout-add-project-btn')
+        addBtn.addEventListener('click', () => { createNewProject(input.value)})
+        addProjectBtns.append(addBtn)
 
         const cancelBtn = document.createElement('button')
         cancelBtn.textContent = 'Cancel'
-        form.appendChild(cancelBtn)
-
-       if (type == 'project') {
-        submitBtn.addEventListener('click', addProject)
-        cancelBtn.addEventListener('click', () => { removeForm('project') })
-       } else {
-        submitBtn.addEventListener('click', addTask)
-        cancelBtn.addEventListener('click', () => { removeForm('task') })
-       }
-
-       return form
+        cancelBtn.classList.add('popout-cancel-project-btn')
+        cancelBtn.addEventListener('click', removeProjectForm)
+        addProjectBtns.append(cancelBtn)
     }
 
-    function removeForm(type){
-        document.querySelector(`#${type}Form`).remove()
-    }
-
-    function addProject(e){
-        e.preventDefault()
-        const projectTitle = document.querySelector('#projectTitleInput').value.trim()
-        if (Project.allProjects.includes(projectTitle)){
+    function createNewProject(project){
+        console.log(project)
+        if (!project){
+            alert('Please enter a name for your project')
+            return
+        } else if (Project.containsProject(project)){
             alert('Name is already in use')
-            return false
-        } else if (!projectTitle) {
-            alert('Please give the project a name')
-            return false 
-        } else {
-            removeForm('project')
+            return
         }
 
-        const project = new Project(projectTitle)
-        
-        const li = document.createElement('li')
-        li.classList.add('project')
-        li.textContent = project.title
-        projectList.appendChild(li)
+        const newProject = new Project(project)
+        renderSingleProject(newProject)
+        removeProjectForm()
+
     }
 
-    function loadProjectTasks(e){
-        if (!e.target.classList.contains('project')) return
-        const project = Project.getProject(e.target.textContent)
-
-        const title = document.querySelector('.project-title')
-        const amountOfTasks = document.querySelector('.total-tasks')
-        
-        amountOfTasks.textContent = project.length
-        title.textContent = project.title
-
-        for (const task of project.tasks){
-            console.log(task)
-        }
-    }
-
-    function addTask(e){
-        e.preventDefault()
-        const taskTitle = document.querySelector('#taskTitleInput').value.trim()
-
-        if (!taskTitle){
-            alert('Please give the task a name')
-            return false
-        } else {
-            removeForm('task')
-        }
-        const task = new Task(taskTitle)
-        console.log(task.id)
-
-        const div = document.createElement('div')
-        div.textContent = task.title
-        taskContainer.insertBefore(div, addTaskBtn)
+    function removeProjectForm(){
+        const form = document.querySelector('.projectForm')
+        form.remove()
+        addProjectBtn.style.display = 'flex'
     }
 
     return {
-        initListeners,
+        initListeners
     }
 })()
 

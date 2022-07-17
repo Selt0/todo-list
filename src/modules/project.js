@@ -7,6 +7,9 @@ class Project {
 
     static allProjects = []
 
+    static containsProject(projectTitle){
+        return Project.allProjects.some(project => project.title === projectTitle)
+    }
     static getProject(projectTitle){
         return Project.allProjects.find(project => project.title === projectTitle)
     }
@@ -14,13 +17,29 @@ class Project {
     static removeProject(projectTitle){
         Project.allProjects = Project.allProjects.filter(project => project.title !== projectTitle)
     }
+
+    static setAllProjects(projects){
+        Project.allProjects = projects
+    }
     
     setTasks(tasks){
         this.tasks = tasks
     }
 
-    get length(){
-        return this.tasks.length
+    get todoLength(){
+        return this.tasks.filter(task => !task.completed).length
+    }
+
+    get completedLength(){
+        return this.tasks.filter(task => task.completed).length
+    }
+
+    get todoTasks(){
+        return this.tasks.filter(task => !task.completed)
+    }
+
+    get completedTasks(){
+        return this.tasks.filter(task => task.completed)
     }
 
     getTask(taskItem){
