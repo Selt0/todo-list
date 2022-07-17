@@ -10,12 +10,10 @@
       <section class="sidebar">
         <h2>Projects</h2>
         <div class="project-container">
-          <div class="project active">
+          <div class="project active" data-project-title = 'School'>
             <div class="project-info">
               <i class="fa-solid fa-book-open"></i>
-              <span class="project-title">
-                School
-              </span>
+              <span class="project-title">School</span>
             </div>
             <div class="project-buttons">
               <i class="fa-solid fa-pen-to-square"></i>
@@ -25,9 +23,7 @@
           <div class="project">
             <div class="project-info">
               <i class="fa-solid fa-book-open"></i>
-              <span class="project-title">
-                Personal
-              </span>
+              <span class="project-title">Personal</span>
             </div>
             <div class="project-buttons">
               <i class="fa-solid fa-pen-to-square"></i>
@@ -37,9 +33,7 @@
           <div class="project">
             <div class="project-info">
               <i class="fa-solid fa-book-open"></i>
-              <span class="project-title">
-                Design
-              </span>
+              <span class="project-title">Design</span>
             </div>
             <div class="project-buttons">
               <i class="fa-solid fa-pen-to-square"></i>
@@ -58,7 +52,7 @@
       </section>
       <section class="tasks">
         <div class="container">
-          <h1 class="title">School</h1>
+          <h1 class="project-title">School</h1>
           <div class="add-task card">
             <button id="add-task" class="btn">
               <div class="add-icon">
@@ -67,8 +61,8 @@
               Add a task
             </button>
           </div>
+          <p class="counter">Tasks - <span class="total-tasks">8</span></p>
           <div class="tasks-container">
-            <p>Tasks - <span class="total-tasks">8</span></p>
             <div class="card">
               <div class="checkbox">
               </div>
@@ -109,18 +103,22 @@
               </div>
             </div>
           </div>
-  
-          <div class="completed-tasks task-container">
-            <p>Completed - <span class="completed-tasks">2</span></p>
+          
+          <p class="counter">Completed - <span class="completed-tasks">2</span></p>
+
+          <div class="completed-tasks tasks-container">
+            
             <div class="card">
               <div class="checkbox checked">
                 <i class="fa-solid fa-check"></i>
               </div>
               <div class="task-info">
                 <p class="task-title completed">Finish the essay collaboration</p>
-                <div class="due-date">
-                  <i class="fa-solid fa-calendar"></i>
-                  <span class="day">Thursday</span>
+                <div class="task-details">
+                  <div class="due-date">
+                    <i class="fa-solid fa-calendar"></i>
+                    <span class="day">Thursday</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -130,9 +128,11 @@
               </div>
               <div class="task-info">
                 <p class="task-title completed">Read chapter 6</p>
-                <div class="due-date">
-                  <i class="fa-solid fa-calendar"></i>
-                  <span class="day">Yesterday</span>
+                <div class="task-details">
+                  <div class="due-date">
+                    <i class="fa-solid fa-calendar"></i>
+                    <span class="day">Thursday</span>
+                  </div>
                 </div>
               </div>
             </div>
