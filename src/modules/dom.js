@@ -69,7 +69,9 @@ const DOM = (() => {
 
     function setActiveProject(node){
         const oldActive = document.querySelector('.active')
-        oldActive.classList.toggle('active')
+        if (oldActive){
+            oldActive.classList.toggle('active')
+        }
 
         node.classList.add('active')
         clearTasks()
