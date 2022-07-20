@@ -108,6 +108,8 @@ const DOM = (() => {
         cancelBtn.classList.add('popout-cancel-project-btn')
         cancelBtn.addEventListener('click', removeProjectForm)
         addProjectBtns.append(cancelBtn)
+
+        input.focus()
     }
 
     function createNewProject(project, e){
