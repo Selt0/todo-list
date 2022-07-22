@@ -80,12 +80,10 @@ const DOM = (() => {
     }
 
     function deleteProject(node){
-        console.log(Project.allProjects)
-
         const project = Project.getProject(node.dataset.projectTitle)
         Project.removeProject(project.title)
         node.remove()
-        console.log(Project.allProjects)
+        setActiveProject(document.querySelector('.project'))
     }
 
     function renderProjectList(){
@@ -99,6 +97,7 @@ const DOM = (() => {
     }
 
     // TASK FUNCTIONS
+
     function renderTask(task){
         const card = document.createElement('div')
         card.classList.add('card')
