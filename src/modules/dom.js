@@ -6,13 +6,17 @@ const DOM = (() => {
     const projectContainer = document.querySelector('.project-container')
     const addProjectContainer = document.querySelector('.add-project')
     const addProjectBtn = document.querySelector('#add-project')
+    
     const tasksContainer = document.querySelector('.tasks-container')
+    const addTaskContainer = document.querySelector('.add-task')
+    const addTaskBtn = document.querySelector('#add-task')
     const completedContainer = document.querySelector('.completed-tasks')
 
 
     function initListeners(){
         projectContainer.addEventListener('click', loadProjectEvent)
         addProjectBtn.addEventListener('click', renderNewProjectForm)
+        addTaskBtn.addEventListener('click', renderNewTaskForm)
     }
 
     // PROJECT FUNCTIONS
@@ -25,17 +29,7 @@ const DOM = (() => {
         }
     }
 
-    function renderProjectList(){
-        const projects = Project.allProjects
-
-        for (const project of projects){
-            renderSingleProject(project)
-        } 
-        
-        setActiveProject(document.querySelector('.project'))
-    }
-
-    function renderSingleProject(project){
+    function renderProject(project){
         const div = document.createElement('div')
         div.classList.add('project')
         div.dataset.projectTitle = project.title
@@ -76,7 +70,6 @@ const DOM = (() => {
         node.classList.add('active')
         clearTasks()
         let project = Project.getProject(node.dataset.projectTitle)
-        console.log(project)
         renderProjectsTask(project)
     }
 
@@ -124,7 +117,7 @@ const DOM = (() => {
         }
 
         const newProject = new Project(project)
-        renderSingleProject(newProject)
+        renderProject(newProject)
         removeProjectForm()
     }
 
@@ -143,18 +136,85 @@ const DOM = (() => {
         console.log(Project.allProjects)
     }
 
+    function renderProjectList(){
+        const projects = Project.allProjects
+
+        for (const project of projects){
+            renderProject(project)
+        } 
+        
+        setActiveProject(document.querySelector('.project'))
+    }
+
     // TASK FUNCTIONS
+    function renderNewTaskForm(){
+        addTaskBtn.style.display = 'none'
+        
+        const form = document.createElement('form')
+        form.classList.add('taskForm')
+        addTaskContainer.append(form)
+
+        const input = document.createElement('input')
+        input.type = 'text'
+        input.placeholder = 'Enter task'
+        input.classList.add('task-input')
+        form.append(input)
+
+        const addTaskBtns = document.createElement('div')
+        addTaskBtns.classList.add('popout-task-btns')
+        form.append(addTaskBtns)
+
+        const addBtn = document.createElement('button')
+        addBtn.textContent = 'Add'
+        addBtn.classList.add('popout-add-task-btn')
+        addBtn.addEventListener('click', (e) => { createNewTask(input.value, e)})
+        addTaskBtns.append(addBtn)
+
+        const cancelBtn = document.createElement('button')
+        cancelBtn.textContent = 'Cancel'
+        cancelBtn.classList.add('popout-cancel-task-btn')
+        cancelBtn.addEventListener('click', removeTaskForm)
+        addTaskBtns.append(cancelBtn)
+
+        input.focus()
+    }
+
+    function createNewTask(task, e){
+        e.preventDefault()
+       
+        if (!task){
+            alert('Please enter a name for your task')
+            return false
+        }
+
+        const newTask = new Task(task)
+        updateTaskProject(newTask)
+        updateTotalTodoTasksLength()
+        tasksContainer.prepend(renderTask(newTask))
+        removeTaskForm()
+    }
+
+    function updateTaskProject(task){
+        const projectTitle = getProjectTitle()
+        if (projectTitle !== 'All Tasks'){
+            const project = Project.getProject(projectTitle)
+            project.setTask(task)
+            task.setProject(project.title)
+        }
+    }
+
+    function removeTaskForm(){
+        const form = document.querySelector('.taskForm')
+        form.remove()
+        addTaskBtn.style.display = 'flex'
+    }
 
     function renderProjectsTask(project){
         const title = document.querySelector('h1.project-title')
         title.textContent = capitalizeString(project.title)
 
-        const totalTasks = document.querySelector('.total-tasks')
-        totalTasks.textContent = project.todoLength
-
-        const completedTasks = document.querySelector('.total-completed-tasks')
-        completedTasks.textContent = project.completedLength
-
+        updateTotalTodoTasksLength()
+        updateCompletedTasksLength()
         renderUncompletedTasks(project)
         renderCompletedTasks(project)
     }
@@ -231,12 +291,30 @@ const DOM = (() => {
         completedContainer.innerHTML = ''
     }
 
+    function updateTotalTodoTasksLength(){
+        const projectTitle = getProjectTitle()
+        const project = Project.getProject(projectTitle)
+        const totalTasks = document.querySelector('.total-tasks')
+        totalTasks.textContent = project.todoLength
+    }
+
+    function updateCompletedTasksLength(){
+        const projectTitle = getProjectTitle()
+        const project = Project.getProject(projectTitle)
+        const completedTasks = document.querySelector('.total-completed-tasks')
+        completedTasks.textContent = project.completedLength
+    }
+
     
     // HELPER FUNCTIONS
 
     function capitalizeString(string){
         let stringArr = string.split(' ')
         return stringArr.map(word => word[0].toUpperCase() + word.slice(1)).join(' ')
+    }
+
+    function getProjectTitle(){
+        return document.querySelector('h1.project-title').textContent.toLowerCase()
     }
 
     return {
