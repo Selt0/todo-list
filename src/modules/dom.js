@@ -243,7 +243,6 @@ const DOM = (() => {
             addTaskContainer.append(form)
             addBtn.addEventListener('click', (e) => { createNewTask(input.value, e)})
             cancelBtn.addEventListener('click', () => {removeForm('task')})
-
         } else {
             addProjectBtn.style.display = 'none'
             addProjectContainer.append(form)
@@ -252,6 +251,16 @@ const DOM = (() => {
         }
 
         input.focus()
+    }
+
+    function renderModifyButtons() {
+        const div = document.createElement('div')
+        div.classList.add('modify-buttons')
+
+        const deleteIcon = document.createElement('i')
+        deleteIcon.classList.add('fa-solid', 'fa-xmark')
+        div.append(deleteIcon)
+        return div
     }
 
     function removeForm(type){
@@ -275,16 +284,6 @@ const DOM = (() => {
 
     function getProjectTitle(){
         return document.querySelector('h1.project-title').textContent.toLowerCase()
-    }
-
-    function renderModifyButtons() {
-        const div = document.createElement('div')
-        div.classList.add('modify-buttons')
-
-        const deleteIcon = document.createElement('i')
-        deleteIcon.classList.add('fa-solid', 'fa-xmark')
-        div.append(deleteIcon)
-        return div
     }
 
     return {

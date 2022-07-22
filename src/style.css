@@ -21,6 +21,8 @@
     background-color: var(--main-dark);
 }
 
+/* PROJECT SIDEBAR */
+
 .sidebar {
     background-color: var(--secondary-dark);
     min-width: 250px;
@@ -64,6 +66,59 @@
     padding: 25px;
 }
 
+/* TASKS */
+.container {
+    width: 60%;
+}
+
+.tasks {
+    color: var(--main-text-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin-top: 100px;
+}
+
+.tasks-container {
+    margin-bottom: 30px;
+}
+
+.tasks .project-title {
+    color: #fff;
+    margin-bottom: 30px;
+}
+
+.counter {
+    margin-bottom: 15px;
+}
+
+.tasks-container .card:hover {
+    background-color: var(--active-hover);
+    cursor: pointer;
+}   
+
+.card {
+    display: flex;
+    background-color: var(--secondary-dark);
+    border-radius: 15px;
+    margin-bottom: 10px;
+    padding: 15px;
+}
+
+.task-details {
+    font-size: .9rem;
+    color: var(--secondary-text-color);
+}
+
+.completed {
+    text-decoration: line-through;
+    text-decoration-color: #fff;
+    text-decoration-thickness: 1.5px;
+}
+
+/* FORM BUTTONS/CONTROL */
+
 .btn {
     display: flex;
     align-items: center;
@@ -87,6 +142,7 @@
 .modify-buttons {
     display: none;
     margin-left: auto;
+    align-self: center;
 }
 
 .modify-buttons i:hover {
@@ -105,47 +161,7 @@
     margin-right: 10px;
 }
 
-.tasks {
-    color: var(--main-text-color);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    margin-top: 100px;
-}
-
-.container {
-    width: 60%;
-}
-
-.tasks .project-title {
-    color: #fff;
-    margin-bottom: 30px;
-}
-
-.tasks-container {
-    margin-bottom: 30px;
-}
-
-.counter {
-    margin-bottom: 15px;
-}
-
-.tasks-container .card:hover {
-    background-color: var(--active-hover);
-    cursor: pointer;
-}   
-
-
-.card {
-    display: flex;
-    background-color: var(--secondary-dark);
-    border-radius: 15px;
-    margin-bottom: 10px;
-    padding: 15px;
-}
-
-.add-task  .btn{
+.add-task .btn{
     width: 100%;
 }
 
@@ -174,15 +190,16 @@
     align-items: center;
 }
 
-.completed {
-    text-decoration: line-through;
-    text-decoration-color: #fff;
-    text-decoration-thickness: 1.5px;
+.popout-btns {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
 }
 
-.task-details {
-    font-size: .9rem;
-    color: var(--secondary-text-color);
+.popout-btns button {
+    width: 60px;
+    height: 30px;
+    padding: 5px;
 }
 
 .projectForm {
@@ -196,16 +213,3 @@
     padding: 5px;
     margin-bottom: 10px;
 }
-
-.popout-btns {
-    display: flex;
-    gap: 20px;
-    justify-content: center;
-}
-
-.popout-btns button {
-    width: 60px;
-    height: 30px;
-    padding: 5px;
-}
-
