@@ -79,16 +79,17 @@
     background-color: var(--active-hover);
 }
 
-.project:hover .project-buttons{
+.project:hover .modify-buttons,
+.card:hover .modify-buttons{
     display: block;
 }
 
-.project-buttons {
+.modify-buttons {
     display: none;
-    align-self: flex-end;
+    margin-left: auto;
 }
 
-.project-buttons i:hover {
+.modify-buttons i:hover {
  color: var(--pink)
 }
 
@@ -196,13 +197,13 @@
     margin-bottom: 10px;
 }
 
-.popout-project-btns {
+.popout-btns {
     display: flex;
     gap: 20px;
     justify-content: center;
 }
 
-.popout-project-btns button {
+.popout-btns button {
     width: 60px;
     height: 30px;
     padding: 5px;

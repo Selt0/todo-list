@@ -15,8 +15,8 @@ const DOM = (() => {
 
     function initListeners(){
         projectContainer.addEventListener('click', loadProjectEvent)
-        addProjectBtn.addEventListener('click', renderNewProjectForm)
-        addTaskBtn.addEventListener('click', renderNewTaskForm)
+        addProjectBtn.addEventListener('click', () => {renderNewForm('project')})
+        addTaskBtn.addEventListener('click', () => {renderNewForm('task')})
     }
 
     // PROJECT FUNCTIONS
@@ -48,17 +48,7 @@ const DOM = (() => {
         span.textContent = capitalizeString(project.title)
         projectInfo.append(span)
 
-        div.append(renderProjectButtons())
-    }
-
-    function renderProjectButtons() {
-        const div = document.createElement('div')
-        div.classList.add('project-buttons')
-
-        const deleteIcon = document.createElement('i')
-        deleteIcon.classList.add('fa-solid', 'fa-xmark')
-        div.append(deleteIcon)
-        return div
+        div.append(renderModifyButtons())
     }
 
     function setActiveProject(node){
@@ -71,38 +61,6 @@ const DOM = (() => {
         clearTasks()
         let project = Project.getProject(node.dataset.projectTitle)
         renderProjectsTask(project)
-    }
-
-    function renderNewProjectForm(){
-        addProjectBtn.style.display = 'none'
-        
-        const form = document.createElement('form')
-        form.classList.add('projectForm')
-        addProjectContainer.append(form)
-
-        const input = document.createElement('input')
-        input.type = 'text'
-        input.placeholder = 'Enter project'
-        input.classList.add('project-input')
-        form.append(input)
-
-        const addProjectBtns = document.createElement('div')
-        addProjectBtns.classList.add('popout-project-btns')
-        form.append(addProjectBtns)
-
-        const addBtn = document.createElement('button')
-        addBtn.textContent = 'Add'
-        addBtn.classList.add('popout-add-project-btn')
-        addBtn.addEventListener('click', (e) => { createNewProject(input.value, e)})
-        addProjectBtns.append(addBtn)
-
-        const cancelBtn = document.createElement('button')
-        cancelBtn.textContent = 'Cancel'
-        cancelBtn.classList.add('popout-cancel-project-btn')
-        cancelBtn.addEventListener('click', removeProjectForm)
-        addProjectBtns.append(cancelBtn)
-
-        input.focus()
     }
 
     function createNewProject(project, e){
@@ -118,13 +76,7 @@ const DOM = (() => {
 
         const newProject = new Project(project)
         renderProject(newProject)
-        removeProjectForm()
-    }
-
-    function removeProjectForm(){
-        const form = document.querySelector('.projectForm')
-        form.remove()
-        addProjectBtn.style.display = 'flex'
+        removeForm('project')
     }
 
     function deleteProject(node){
@@ -147,36 +99,36 @@ const DOM = (() => {
     }
 
     // TASK FUNCTIONS
-    function renderNewTaskForm(){
-        addTaskBtn.style.display = 'none'
-        
-        const form = document.createElement('form')
-        form.classList.add('taskForm')
-        addTaskContainer.append(form)
+    function renderTask(task){
+        const card = document.createElement('div')
+        card.classList.add('card')
 
-        const input = document.createElement('input')
-        input.type = 'text'
-        input.placeholder = 'Enter task'
-        input.classList.add('task-input')
-        form.append(input)
+        const checkbox = document.createElement('div')
+        checkbox.classList.add('checkbox')
+        card.append(checkbox)
 
-        const addTaskBtns = document.createElement('div')
-        addTaskBtns.classList.add('popout-task-btns')
-        form.append(addTaskBtns)
+        const taskInfo = document.createElement('div')
+        taskInfo.classList.add('task-info')
+        card.append(taskInfo)
 
-        const addBtn = document.createElement('button')
-        addBtn.textContent = 'Add'
-        addBtn.classList.add('popout-add-task-btn')
-        addBtn.addEventListener('click', (e) => { createNewTask(input.value, e)})
-        addTaskBtns.append(addBtn)
+        const taskTitle = document.createElement('p')
+        taskTitle.classList.add('task-title')
+        taskTitle.textContent = task.title
+        taskInfo.append(taskTitle)
 
-        const cancelBtn = document.createElement('button')
-        cancelBtn.textContent = 'Cancel'
-        cancelBtn.classList.add('popout-cancel-task-btn')
-        cancelBtn.addEventListener('click', removeTaskForm)
-        addTaskBtns.append(cancelBtn)
+        if (task.completed){
+            checkbox.classList.add('checked')
+            taskTitle.classList.add('completed')
 
-        input.focus()
+            const icon = document.createElement('i')
+            icon.classList.add('fa-solid', 'fa-check')
+            checkbox.append(icon)
+        }
+
+        taskInfo.append(renderTaskDetails(task))
+        card.append(renderModifyButtons())
+
+        return card
     }
 
     function createNewTask(task, e){
@@ -191,7 +143,7 @@ const DOM = (() => {
         updateTaskProject(newTask)
         updateTotalTodoTasksLength()
         tasksContainer.prepend(renderTask(newTask))
-        removeTaskForm()
+        removeForm('task')
     }
 
     function updateTaskProject(task){
@@ -201,12 +153,6 @@ const DOM = (() => {
             project.setTask(task)
             task.setProject(project.title)
         }
-    }
-
-    function removeTaskForm(){
-        const form = document.querySelector('.taskForm')
-        form.remove()
-        addTaskBtn.style.display = 'flex'
     }
 
     function renderProjectsTask(project){
@@ -235,37 +181,6 @@ const DOM = (() => {
         }
     }
 
-    function renderTask(task){
-        const card = document.createElement('div')
-        card.classList.add('card')
-
-        const checkbox = document.createElement('div')
-        checkbox.classList.add('checkbox')
-        card.append(checkbox)
-
-        const taskInfo = document.createElement('div')
-        taskInfo.classList.add('task-info')
-        card.append(taskInfo)
-
-        const taskTitle = document.createElement('p')
-        taskTitle.classList.add('task-title')
-        taskTitle.textContent = task.title
-        taskInfo.append(taskTitle)
-
-        if (task.completed){
-            checkbox.classList.add('checked')
-            taskTitle.classList.add('completed')
-
-            const icon = document.createElement('i')
-            icon.classList.add('fa-solid', 'fa-check')
-            checkbox.append(icon)
-        }
-
-        taskInfo.append(renderTaskDetails(task))
-
-        return card
-    }
-
     function renderTaskDetails(task){
         const div = document.createElement('div')
         div.classList.add('task-details')
@@ -286,11 +201,6 @@ const DOM = (() => {
         return div
     }
 
-    function clearTasks(){
-        tasksContainer.innerHTML = ''
-        completedContainer.innerHTML = ''
-    }
-
     function updateTotalTodoTasksLength(){
         const projectTitle = getProjectTitle()
         const project = Project.getProject(projectTitle)
@@ -305,8 +215,59 @@ const DOM = (() => {
         completedTasks.textContent = project.completedLength
     }
 
+    // FORM
+
+    function renderNewForm(type){
+        const form = document.createElement('form')
+        form.classList.add(`${type}Form`)
+
+        const input = document.createElement('input')
+        input.type = 'text'
+        input.placeholder = `Enter ${type}`
+        input.classList.add(`${type}-input`)
+        form.append(input)
+
+        const btnContainer = document.createElement('div')
+        btnContainer.classList.add(`popout-btns`)
+        form.append(btnContainer)
+
+        const addBtn = document.createElement('button')
+        addBtn.textContent = 'Add'
+        btnContainer.append(addBtn)
+
+        const cancelBtn = document.createElement('button')
+        cancelBtn.textContent = 'Cancel'
+        btnContainer.append(cancelBtn)
+
+        if (type === 'task'){
+            addTaskBtn.style.display = 'none'
+            addTaskContainer.append(form)
+            addBtn.addEventListener('click', (e) => { createNewTask(input.value, e)})
+            cancelBtn.addEventListener('click', () => {removeForm('task')})
+
+        } else {
+            addProjectBtn.style.display = 'none'
+            addProjectContainer.append(form)
+            addBtn.addEventListener('click', (e) => { createNewProject(input.value, e)})
+            cancelBtn.addEventListener('click', () => {removeForm('project')})
+        }
+
+        input.focus()
+    }
+
+    function removeForm(type){
+        const form = document.querySelector(`.${type}Form`)
+        form.remove()
+
+        type === 'project' ? addProjectBtn.style.display = 'flex' : addTaskBtn.style.display = 'flex'
+    }
     
     // HELPER FUNCTIONS
+
+    function clearTasks(){
+        tasksContainer.innerHTML = ''
+        completedContainer.innerHTML = ''
+    }
 
     function capitalizeString(string){
         let stringArr = string.split(' ')
@@ -315,6 +276,16 @@ const DOM = (() => {
 
     function getProjectTitle(){
         return document.querySelector('h1.project-title').textContent.toLowerCase()
+    }
+
+    function renderModifyButtons() {
+        const div = document.createElement('div')
+        div.classList.add('modify-buttons')
+
+        const deleteIcon = document.createElement('i')
+        deleteIcon.classList.add('fa-solid', 'fa-xmark')
+        div.append(deleteIcon)
+        return div
     }
 
     return {
