@@ -16,6 +16,8 @@ const DOM = (() => {
     function initListeners(){
         projectContainer.addEventListener('click', loadProjectEvent)
         addProjectBtn.addEventListener('click', () => {renderNewForm('project')})
+        tasksContainer.addEventListener('click', loadTaskEvent)
+        completedContainer.addEventListener('click', loadTaskEvent)
         addTaskBtn.addEventListener('click', () => {renderNewForm('task')})
     }
 
@@ -97,9 +99,20 @@ const DOM = (() => {
     }
 
     // TASK FUNCTIONS
+    function loadTaskEvent(e){
+        console.log(e.target)
+        if (e.target.classList.contains('checkbox')){
+            toggleTaskCompletion(e.target)
+        } else if (e.target.classList.contains('fa-xmark')){
+            console.log('deleting')
+        } else {
+            console.log('opening details!')
+        }
+    }
 
     function renderTask(task){
         const card = document.createElement('div')
+        card.dataset.taskId = task.id
         card.classList.add('card')
 
         const checkbox = document.createElement('div')
@@ -214,6 +227,31 @@ const DOM = (() => {
         completedTasks.textContent = project.completedLength
     }
 
+    function toggleTaskCompletion(node){
+        const project = Project.getProject(getProjectTitle())
+        const task = project.getTask(Number(node.parentElement.dataset.taskId))
+
+        node.parentElement.remove()
+        task.toggleCompletion()
+        updateCheckbox(task, node)
+        updateTotalTodoTasksLength()
+        updateCompletedTasksLength()
+
+        if (task.completed){
+            completedContainer.prepend(renderTask(task))
+        } else {
+            tasksContainer.prepend(renderTask(task))
+        }
+    }
+
+    function updateCheckbox(task, node){
+        node.classList.toggle('checked')
+        if (task.completed){
+            const icon = document.createElement('i')
+            icon.classList.add('fa-solid', 'fa-check')
+            node.append(icon)
+        }
+    }
     // FORM
 
     function renderNewForm(type){
