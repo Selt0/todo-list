@@ -42,9 +42,8 @@ class Project {
         return this.tasks.filter(task => task.completed)
     }
 
-    getTask(taskItem){
-        const task = this.tasks.find(task => task.name === taskItem.name && task.dateCreated === taskItem.dateCreated)
-
+    getTask(taskID){
+        const task = this.tasks.find(({id}) => id === taskID)
         return task
     }
 

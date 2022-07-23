@@ -35,8 +35,8 @@ class Task {
         this.project = project
     }
 
-    setComplete(){
-        this.completed = true
+    toggleCompletion(){
+        this.completed ? this.completed = false : this.completed = true
     }
 }
 
