@@ -17,7 +17,7 @@
 .main {
     font-size: 18px;
     display: flex;
-    height: 100vh;
+    min-height: 100vh;
     background-color: var(--main-dark);
 }
 
@@ -26,7 +26,7 @@
 .sidebar {
     background-color: var(--secondary-dark);
     min-width: 250px;
-    width: 300px;
+    width: 350px;
     color: var(--project-text-color)
 }
 
@@ -68,7 +68,7 @@
 
 /* TASKS */
 .container {
-    width: 60%;
+    width: 50%;
 }
 
 .tasks {
@@ -197,7 +197,7 @@
 }
 
 .popout-btns button {
-    width: 60px;
+    width: 100px;
     height: 30px;
     padding: 5px;
 }
@@ -208,8 +208,22 @@
     justify-content: center;
 }
 
-.project-input {
+.project-input, .task-input {
     height: 35px;
     padding: 5px;
     margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+.taskForm {
+    width: 100%;
+    padding: 15px;
+}
+
+.task-input {
+    width: 100%;
+}
+
+.fa-check {
+    pointer-events: none;
 }
