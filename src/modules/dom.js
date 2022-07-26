@@ -100,11 +100,10 @@ const DOM = (() => {
 
     // TASK FUNCTIONS
     function loadTaskEvent(e){
-        console.log(e.target)
         if (e.target.classList.contains('checkbox')){
             toggleTaskCompletion(e.target)
         } else if (e.target.classList.contains('fa-xmark')){
-            console.log('deleting')
+            deleteTask(e.target)
         } else {
             console.log('opening details!')
         }
@@ -229,9 +228,10 @@ const DOM = (() => {
 
     function toggleTaskCompletion(node){
         const project = Project.getProject(getProjectTitle())
-        const task = project.getTask(Number(node.parentElement.dataset.taskId))
+        const taskCard = node.parentElement
+        const task = project.getTask(Number(taskCard.dataset.taskId))
 
-        node.parentElement.remove()
+        taskCard.remove()
         task.toggleCompletion()
         updateCheckbox(task, node)
         updateTotalTodoTasksLength()
@@ -251,6 +251,18 @@ const DOM = (() => {
             icon.classList.add('fa-solid', 'fa-check')
             node.append(icon)
         }
+    }
+
+    function deleteTask(node){
+        const project = Project.getProject(getProjectTitle())
+        const taskCard = node.parentElement.parentElement
+        const taskID = Number(taskCard.dataset.taskId)
+        const task = project.getTask(taskID)
+
+        project.removeTask(taskID)
+        taskCard.remove()
+
+        task.completed ? updateCompletedTasksLength() : updateTotalTodoTasksLength()
     }
     // FORM
 
