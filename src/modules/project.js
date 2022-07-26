@@ -42,7 +42,7 @@ class Project {
         return this.tasks.filter(task => task.completed)
     }
 
-    getTask(taskID){
+   getTask(taskID){
         const task = this.tasks.find(({id}) => id === taskID)
         return task
     }
@@ -51,12 +51,8 @@ class Project {
         this.tasks.push(task)
     }
 
-    removeTask(taskItem){
-        this.tasks = this.tasks.filter(task => task.name != taskItem.name && task.dateCreated != taskItem.dateCreated)
-    }
-
-    setNewTitle(value){
-        this.title = value
+    removeTask(taskID){
+        this.tasks = this.tasks.filter(task => task.id != taskID)
     }
 }
 
