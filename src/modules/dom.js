@@ -6,7 +6,7 @@ const DOM = (() => {
     const projectContainer = document.querySelector('.project-container')
     const addProjectContainer = document.querySelector('.add-project')
     const addProjectBtn = document.querySelector('#add-project')
-    
+    const taskSection = document.querySelector('.tasks')
     const tasksContainer = document.querySelector('.tasks-container')
     const addTaskContainer = document.querySelector('.add-task')
     const addTaskBtn = document.querySelector('#add-task')
@@ -104,8 +104,9 @@ const DOM = (() => {
             toggleTaskCompletion(e.target)
         } else if (e.target.classList.contains('fa-xmark')){
             deleteTask(e.target)
-        } else {
+        } else if (e.target.classList.contains('card')) {
             console.log('opening details!')
+            renderTaskDetailsForm(Number(e.target.dataset.taskId))
         }
     }
 
@@ -151,19 +152,16 @@ const DOM = (() => {
         }
 
         const newTask = new Task(task)
-        updateTaskProject(newTask)
+        updateProjectsTask(newTask)
         updateTotalTodoTasksLength()
         tasksContainer.prepend(renderTask(newTask))
         removeForm('task')
     }
 
-    function updateTaskProject(task){
+    function updateProjectsTask(task){
         const projectTitle = getProjectTitle()
-        if (projectTitle !== 'All Tasks'){
-            const project = Project.getProject(projectTitle)
-            project.setTask(task)
-            task.setProject(project.title)
-        }
+        const project = Project.getProject(projectTitle)
+        project.setTask(task)
     }
 
     function renderProjectsTask(project){
@@ -319,9 +317,116 @@ const DOM = (() => {
 
         type === 'project' ? addProjectBtn.style.display = 'flex' : addTaskBtn.style.display = 'flex'
     }
-    
-    // HELPER FUNCTIONS
 
+    function renderTaskDetailsForm(taskID){
+        const project = Project.getProject(getProjectTitle())
+        const task = project.getTask(taskID)
+
+        const form = document.createElement('form')
+        form.classList.add('detailsForm')
+        taskSection.append(form)
+
+        const legend = document.createElement('legend')
+        legend.textContent = 'Task Details'
+        form.append(legend)
+
+        const titleContainer = document.createElement('div')
+        titleContainer.classList.add('form-control')
+        form.append(titleContainer)
+        const titleLabel = document.createElement('label')
+        titleLabel.htmlFor = 'title'
+        titleLabel.textContent = 'Task: '
+        titleContainer.append(titleLabel)
+        const titleInput = document.createElement('input')
+        titleInput.type = 'text'
+        titleInput.id = 'title'
+        titleInput.value = task.title
+        titleContainer.append(titleInput)
+
+        const dueDateContainer = document.createElement('div')
+        dueDateContainer.classList.add('form-control')
+        form.append(dueDateContainer)
+        const dueDateLabel = document.createElement('label')
+        dueDateLabel.htmlFor = 'date'
+        dueDateLabel.textContent = 'Due Date: '
+        dueDateContainer.append(dueDateLabel)
+        const dueDateInput = document.createElement('input')
+        dueDateInput.type = 'date'
+        dueDateInput.id = 'date'
+        // dueDateInput.value = YYYY-MM-DD
+        dueDateContainer.append(dueDateInput)
+
+        const priorityContainer = document.createElement('div')
+        priorityContainer.classList.add('form-control')
+        form.append(priorityContainer)
+        const priorityLabel = document.createElement('label')
+        priorityLabel.htmlFor = 'priority'
+        priorityLabel.textContent = 'Priority: '
+        priorityContainer.append(priorityLabel)
+        const prioritySelect = document.createElement('select')
+        prioritySelect.id = 'priority'
+        prioritySelect.append(renderPriorityOptions(task, prioritySelect))
+        priorityContainer.append(prioritySelect)
+
+        const notesContainer = document.createElement('div')
+        notesContainer.classList.add('form-control')
+        form.append(notesContainer)
+        const notesLabel = document.createElement('label')
+        notesLabel.htmlFor = 'notes'
+        notesLabel.textContent = 'Notes: '
+        notesContainer.append(notesLabel)
+        const notes = document.createElement('textarea')
+        notes.cols = 50
+        notes.rows = 10
+        notes.id = 'notes'
+        notes.value = task.notes
+        notesContainer.append(notes)
+
+        taskDetailListeners(titleInput, dueDateInput, prioritySelect, notes, task)
+    }
+    
+    function renderPriorityOptions(task, prioritySelect){
+        const priorities = ['None', 'Low', 'Medium', 'High']
+
+        for (const priority of priorities){
+            const option = document.createElement('option')
+            option.value = priority
+            option.textContent = priority
+            if (priority.toLowerCase() === task.priority){
+                option.selected = true
+            }
+            prioritySelect.append(option)
+        }
+    }
+
+    function taskDetailListeners(titleInput, dueDateInput, prioritySelect, notes, task) {
+        document.addEventListener('click', function(e){
+            console.log(e.target, e.target.form)
+        })
+
+        titleInput.addEventListener('change', (e) => {updateTaskTitle(task, e.target.value)})
+        dueDateInput.addEventListener('change', updateTaskDueDate)
+        prioritySelect.addEventListener('change', updateTaskPriority)
+        notes.addEventListener('change', updateTaskNotes)
+    }
+
+    function updateTaskTitle(task, newTitle){
+        console.log(task, newTitle)
+    }
+
+    function updateTaskDueDate(task, newDate){
+        console.log(task, newDate)
+    }
+
+    function updateTaskPriority(task, newPriority){
+        console.log(task, newPriority)
+    }
+
+    function updateTaskNotes(task, newNotes){
+        console.log(task, newNotes)
+    }
+
+    // HELPER FUNCTIONS
     function clearTasks(){
         tasksContainer.innerHTML = ''
         completedContainer.innerHTML = ''
@@ -335,6 +440,8 @@ const DOM = (() => {
     function getProjectTitle(){
         return document.querySelector('h1.project-title').textContent.toLowerCase()
     }
+
+
 
     return {
         initListeners
