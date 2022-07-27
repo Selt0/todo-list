@@ -78,6 +78,7 @@
     align-items: center;
     width: 100%;
     margin-top: 100px;
+    position: relative;
 }
 
 .tasks-container {
@@ -226,4 +227,32 @@
 
 .fa-check {
     pointer-events: none;
+}
+
+/* FORM / POPOUT TASK DETAILS */
+.detailsForm {
+    letter-spacing: 1px;
+    color: black;
+    position: absolute;
+    padding: 15px;
+    min-width: 500px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    border-radius: 15px;
+}
+
+.form-control {
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+textarea {
+    padding: 10px;
+    max-width: 100%;
+    line-height: 1.5;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    box-shadow: 1px 1px 1px #999;
 }
