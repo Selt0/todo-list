@@ -5,6 +5,8 @@ class Task {
         this.title = title
         this.completed = false
         this.id = taskID++
+        this.priority = 'none'
+        this.notes = ''
     }
 
     setTitle(value){
@@ -19,20 +21,12 @@ class Task {
         this.dueDate = date
     }
 
-    getPriority(){
-        if (this.priority) return this.priority
-    }
-
     setPriority(value){
         this.priority = value
     }
 
-    getProject(){
-        if (this.project) return this.project
-    }
-    
-    setProject(project){
-        this.project = project
+    setNotes(value){
+        this.notes = value
     }
 
     toggleCompletion(){
