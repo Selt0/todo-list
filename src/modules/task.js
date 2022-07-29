@@ -13,10 +13,6 @@ class Task {
          this.title = value
     }
 
-    getDueDate(){
-        if (this.dueDate) return this.dueDate
-    }
-
     setDueDate(date){
         this.dueDate = date
     }
