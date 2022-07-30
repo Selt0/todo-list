@@ -107,24 +107,37 @@
     padding: 15px;
 }
 
+.task-info {
+    pointer-events: none;
+}
+
 .task-details {
     font-size: .9rem;
     color: var(--secondary-text-color);
+    display: flex;
 }
 
-.priority > .none {
+.task-details div:nth-child(odd) {
+    margin-right: 10px;
+}
+
+.task-details i {
+    margin-right: 5px;
+}
+
+.none {
     display:  none;
 }
 
-.priority > .low {
+ .low {
     color: rgb(31, 194, 31);
 }
 
-.priority > .medium {
+ .medium {
     color: yellow
 }
 
-.priority > .high {
+ .high {
     color: rgb(255, 75, 75);
 }
 

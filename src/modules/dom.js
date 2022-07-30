@@ -1,5 +1,5 @@
 import { Project } from './project'
-import { format } from 'date-fns'
+import { format, parseISO, isAfter, isSameWeek, parse } from 'date-fns'
 import { Task } from './task'
 
 
@@ -141,7 +141,7 @@ const DOM = (() => {
             icon.classList.add('fa-solid', 'fa-check')
             checkbox.append(icon)
         }
-
+        
         taskInfo.append(renderTaskDetails(task))
         card.append(renderModifyButtons())
 
@@ -199,28 +199,40 @@ const DOM = (() => {
         const taskDetails = document.createElement('div')
         taskDetails.classList.add('task-details')
 
-        taskDetails.append(renderTaskDueDate(task))
+        const dueDateDiv = document.createElement('div')
+        dueDateDiv.classList.add('due-date')
+        renderTaskDueDate(task, dueDateDiv)
+
+        taskDetails.append(dueDateDiv)
+
         taskDetails.append(renderTaskPriority(task))
 
         return taskDetails
     }
 
-    function renderTaskDueDate(task){
-        const dueDateDiv = document.createElement('div')
-        dueDateDiv.classList.add('due-date')
-
+    function renderTaskDueDate(task, node){
         if (task.dueDate){
             const icon = document.createElement('i')
             icon.classList.add('fa-solid', 'fa-calendar')
-            dueDateDiv.append(icon)
+            node.append(icon)
 
             const day = document.createElement('span')
-            day.classList.add('day')
-            day.textContent = 'due soon'
-            dueDateDiv.append(day)
+            day.classList.add('due')
+            day.textContent = format(parseISO(task.dueDate), "MM-dd-yyyy")
+            console.log(isAfter(new Date(), parseISO(task.dueDate)))
+            
+            if (isAfter(new Date(), parseISO(task.dueDate))){
+                node.setAttribute("class", "")
+                node.classList.add('due-date', 'high')
+            } else if (isSameWeek(new Date(), parseISO(task.dueDate))){
+                node.setAttribute("class", "")
+                node.classList.add('due-date', 'medium')
+            } else {
+                node.setAttribute("class", "")
+                node.classList.add('due-date')
+            }
+            node.append(day)
         }
-
-        return dueDateDiv
     }
 
     function renderTaskPriority(task){
@@ -378,7 +390,7 @@ const DOM = (() => {
         const dueDateInput = document.createElement('input')
         dueDateInput.type = 'date'
         dueDateInput.id = 'date'
-        // dueDateInput.value = YYYY-MM-DD
+        dueDateInput.value = task.dueDate
         dueDateContainer.append(dueDateInput)
 
         const priorityContainer = document.createElement('div')
@@ -458,10 +470,11 @@ const DOM = (() => {
         node.querySelector('.task-title').textContent = newTitle
     }
 
-    function updateTaskDueDate(task, newDate){
-        // const taskInfo = node.querySelector('.task-info')
-        // task.setDueDate(newDate)
-        // taskInfo.append(renderTaskDetails(task))
+    function updateTaskDueDate(task, node, newDate){
+        const dueDate = node.querySelector('.due-date')
+        dueDate.innerHTML = ''
+        task.setDueDate(newDate)
+        renderTaskDueDate(task, dueDate)
     }
 
     function updateTaskPriority(task, node, newPriority){        
@@ -472,9 +485,7 @@ const DOM = (() => {
     }
 
     function updateTaskNotes(task, newNotes){
-        console.log(task.notes)
         task.setNotes(newNotes)
-        console.log(task.notes)
     }
 
     // HELPER FUNCTIONS
