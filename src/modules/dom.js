@@ -1,5 +1,5 @@
 import { Project } from './project'
-import { format, parseISO, isAfter, isSameWeek, parse } from 'date-fns'
+import { format, parseISO, isAfter, isSameWeek } from 'date-fns'
 import { Task } from './task'
 
 
@@ -219,8 +219,7 @@ const DOM = (() => {
             const day = document.createElement('span')
             day.classList.add('due')
             day.textContent = format(parseISO(task.dueDate), "MM-dd-yyyy")
-            console.log(isAfter(new Date(), parseISO(task.dueDate)))
-            
+
             if (isAfter(new Date(), parseISO(task.dueDate))){
                 node.setAttribute("class", "")
                 node.classList.add('due-date', 'high')
