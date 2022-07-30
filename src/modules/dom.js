@@ -1,7 +1,7 @@
 import { Project } from './project'
 import { format } from 'date-fns'
 import { Task } from './task'
-import { node } from 'webpack'
+
 
 const DOM = (() => {
     const projectContainer = document.querySelector('.project-container')
@@ -79,7 +79,7 @@ const DOM = (() => {
 
         const newProject = new Project(project)
         renderProject(newProject)
-        removeForm('project')
+        removeAddForm('project')
     }
 
     function deleteProject(node){
@@ -109,7 +109,9 @@ const DOM = (() => {
         } else if (e.target.classList.contains('card')) {
             const taskID = Number(e.target.dataset.taskId)
             renderTaskDetailsForm(taskID)
-            taskDetailListeners(e.target, taskID)
+            setTimeout(() => {
+                taskDetailListeners(e.target, taskID)
+              }, 0)
         }
     }
 
@@ -140,11 +142,7 @@ const DOM = (() => {
             checkbox.append(icon)
         }
 
-        const taskDetails = document.createElement('div')
-        taskDetails.classList.add('task-details')
-        taskDetails.append(renderTaskDetails(task))
-
-        taskInfo.append(taskDetails)
+        taskInfo.append(renderTaskDetails(task))
         card.append(renderModifyButtons())
 
         return card
@@ -162,7 +160,7 @@ const DOM = (() => {
         updateProjectsTask(newTask)
         updateTotalTodoTasksLength()
         tasksContainer.prepend(renderTask(newTask))
-        removeForm('task')
+        removeAddForm('task')
     }
 
     function updateProjectsTask(task){
@@ -198,39 +196,41 @@ const DOM = (() => {
     }
 
     function renderTaskDetails(task){
-        if (task.dueDate){
-            renderTaskDueDate(task)
-        }
+        const taskDetails = document.createElement('div')
+        taskDetails.classList.add('task-details')
 
-        if (task.priority !== 'none'){
-            renderTaskPriority(task)
-        }    
+        taskDetails.append(renderTaskDueDate(task))
+        taskDetails.append(renderTaskPriority(task))
+
+        return taskDetails
     }
 
     function renderTaskDueDate(task){
         const dueDateDiv = document.createElement('div')
         dueDateDiv.classList.add('due-date')
 
-        const icon = document.createElement('i')
-        icon.classList.add('fa-solid', 'fa-calendar')
-        dueDateDiv.append(icon)
+        if (task.dueDate){
+            const icon = document.createElement('i')
+            icon.classList.add('fa-solid', 'fa-calendar')
+            dueDateDiv.append(icon)
 
-        const day = document.createElement('span')
-        day.classList.add('day')
-        day.textContent = 'due soon'
-        dueDateDiv.append(day)
+            const day = document.createElement('span')
+            day.classList.add('day')
+            day.textContent = 'due soon'
+            dueDateDiv.append(day)
+        }
 
         return dueDateDiv
     }
 
     function renderTaskPriority(task){
         const priorityDiv = document.createElement('div')
-        priorityDiv.classList.add(`${task.priority}`)
+        priorityDiv.classList.add('priority')
 
         const icon = document.createElement('i')
-        icon.classList.add('fa-solid', 'fa-triangle-exclamation')
+        icon.classList.add('fa-solid', 'fa-triangle-exclamation', `${task.priority}`)
         priorityDiv.append(icon)
-
+    
         return priorityDiv
     }
 
@@ -315,12 +315,12 @@ const DOM = (() => {
             addTaskBtn.style.display = 'none'
             addTaskContainer.append(form)
             addBtn.addEventListener('click', (e) => { createNewTask(input.value, e)})
-            cancelBtn.addEventListener('click', () => {removeForm('task')})
+            cancelBtn.addEventListener('click', () => {removeAddForm('task')})
         } else {
             addProjectBtn.style.display = 'none'
             addProjectContainer.append(form)
             addBtn.addEventListener('click', (e) => { createNewProject(input.value, e)})
-            cancelBtn.addEventListener('click', () => {removeForm('project')})
+            cancelBtn.addEventListener('click', () => {removeAddForm('project')})
         }
 
         input.focus()
@@ -336,7 +336,7 @@ const DOM = (() => {
         return div
     }
 
-    function removeForm(type){
+    function removeAddForm(type){
         const form = document.querySelector(`.${type}Form`)
         form.remove()
 
@@ -390,7 +390,7 @@ const DOM = (() => {
         priorityContainer.append(priorityLabel)
         const prioritySelect = document.createElement('select')
         prioritySelect.id = 'priority'
-        prioritySelect.append(renderPriorityOptions(task, prioritySelect))
+        renderPriorityOptions(task, prioritySelect)
         priorityContainer.append(prioritySelect)
 
         const notesContainer = document.createElement('div')
@@ -421,7 +421,7 @@ const DOM = (() => {
 
         for (const priority of priorities){
             const option = document.createElement('option')
-            option.value = priority
+            option.value = priority.toLowerCase()
             option.textContent = priority
             if (priority.toLowerCase() === task.priority){
                 option.selected = true
@@ -438,7 +438,7 @@ const DOM = (() => {
         form.elements.title.addEventListener('change', (e) => {updateTaskTitle(task, node, e.target.value)})
         form.elements.date.addEventListener('change', (e) => {updateTaskDueDate(task, node, e.target.value)})
         form.elements.priority.addEventListener('change', (e) => {updateTaskPriority(task, node, e.target.value)})
-        form.elements.notes.addEventListener('change', (e) => {updateTaskNotes(task, node, e.target.value)})
+        form.elements.notes.addEventListener('change', (e) => {updateTaskNotes(task, e.target.value)})
 
         setTimeout(() => {
             document.addEventListener('click', closeDetailsForm)
@@ -459,18 +459,22 @@ const DOM = (() => {
     }
 
     function updateTaskDueDate(task, newDate){
-        const taskInfo = node.querySelector('.task-info')
-        console.log(task, newDate)
+        // const taskInfo = node.querySelector('.task-info')
+        // task.setDueDate(newDate)
+        // taskInfo.append(renderTaskDetails(task))
     }
 
-    function updateTaskPriority(task, node, newPriority){
-        const taskInfo = node.querySelector('.task-info')
+    function updateTaskPriority(task, node, newPriority){        
+        const icon = node.querySelector('.fa-triangle-exclamation')
+        icon.classList.remove(task.priority)
         task.setPriority(newPriority)
-        taskInfo
+        icon.classList.add(task.priority)
     }
 
     function updateTaskNotes(task, newNotes){
-        console.log(task, newNotes)
+        console.log(task.notes)
+        task.setNotes(newNotes)
+        console.log(task.notes)
     }
 
     // HELPER FUNCTIONS

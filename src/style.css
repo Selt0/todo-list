@@ -112,6 +112,22 @@
     color: var(--secondary-text-color);
 }
 
+.priority > .none {
+    display:  none;
+}
+
+.priority > .low {
+    color: rgb(31, 194, 31);
+}
+
+.priority > .medium {
+    color: yellow
+}
+
+.priority > .high {
+    color: rgb(255, 75, 75);
+}
+
 .completed {
     text-decoration: line-through;
     text-decoration-color: #fff;
