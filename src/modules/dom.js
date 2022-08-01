@@ -1,6 +1,7 @@
 import { Project } from './project'
 import { format, parseISO, isAfter, isSameWeek } from 'date-fns'
 import { Task } from './task'
+import { Storage } from './storage'
 
 
 const DOM = (() => {
@@ -30,6 +31,34 @@ const DOM = (() => {
         } else {
             setActiveProject(e.target)
         }
+    }
+
+    function createNewProject(input, e){
+        e.preventDefault()
+
+        const project = input.toLowerCase()
+        if (!project){
+            alert('Please enter a name for your project')
+            return false
+        } else if (Project.containsProject(project)){
+            alert('Name is already in use')
+            return false
+        }
+
+        const newProject = new Project(project)
+        Storage.saveData()
+
+        renderProject(newProject)
+        removeAddForm('project')
+    }
+
+    function deleteProject(node){
+        const project = Project.getProject(node.dataset.projectTitle)
+        Project.removeProject(project.title)
+        Storage.saveData()
+
+        node.remove()
+        setActiveProject(document.querySelector('.project'))
     }
 
     function renderProject(project){
@@ -66,32 +95,7 @@ const DOM = (() => {
         renderProjectsTask(project)
     }
 
-    function createNewProject(project, e){
-        e.preventDefault()
-
-        if (!project){
-            alert('Please enter a name for your project')
-            return false
-        } else if (Project.containsProject(project)){
-            alert('Name is already in use')
-            return false
-        }
-
-        const newProject = new Project(project)
-        renderProject(newProject)
-        removeAddForm('project')
-    }
-
-    function deleteProject(node){
-        const project = Project.getProject(node.dataset.projectTitle)
-        Project.removeProject(project.title)
-        node.remove()
-        setActiveProject(document.querySelector('.project'))
-    }
-
-    function renderProjectList(){
-        const projects = Project.allProjects
-
+    function renderProjectList(projects){
         for (const project of projects){
             renderProject(project)
         } 
@@ -113,6 +117,40 @@ const DOM = (() => {
                 taskDetailListeners(e.target, taskID)
               }, 0)
         }
+    }
+
+    function createNewTask(task, e){
+        e.preventDefault()
+        const project = Project.getProject(getProjectTitle())
+
+        if (!task){
+            alert('Please enter a name for your task')
+            return false
+        } else if (!project){
+            alert('Please select a project to add this task')
+            return false
+        }
+
+        const newTask = new Task(task)        
+        Project.getProject(getProjectTitle()).setTask(newTask)
+        Storage.saveData()
+
+        updateTotalTodoTasksLength()
+        tasksContainer.prepend(renderTask(newTask))
+        removeAddForm('task')
+    }
+
+    function deleteTask(node){
+        const project = Project.getProject(getProjectTitle())
+        const taskCard = node.parentElement.parentElement
+        const taskID = Number(taskCard.dataset.taskId)
+        const task = project.getTask(taskID)
+
+        project.removeTask(taskID)
+        Storage.saveData()
+
+        taskCard.remove()
+        task.completed ? updateCompletedTasksLength() : updateTotalTodoTasksLength()
     }
 
     function renderTask(task){
@@ -148,31 +186,10 @@ const DOM = (() => {
         return card
     }
 
-    function createNewTask(task, e){
-        e.preventDefault()
-       
-        if (!task){
-            alert('Please enter a name for your task')
-            return false
-        }
-
-        const newTask = new Task(task)
-        updateProjectsTask(newTask)
-        updateTotalTodoTasksLength()
-        tasksContainer.prepend(renderTask(newTask))
-        removeAddForm('task')
-    }
-
-    function updateProjectsTask(task){
-        const projectTitle = getProjectTitle()
-        const project = Project.getProject(projectTitle)
-        project.setTask(task)
-    }
-
     function renderProjectsTask(project){
         const title = document.querySelector('h1.project-title')
         title.textContent = capitalizeString(project.title)
-
+    
         updateTotalTodoTasksLength()
         updateCompletedTasksLength()
         renderUncompletedTasks(project)
@@ -181,7 +198,6 @@ const DOM = (() => {
 
     function renderUncompletedTasks(project){
         const tasks = project.todoTasks
-
         for (const task of tasks){
             tasksContainer.append(renderTask(task))
         }
@@ -202,7 +218,6 @@ const DOM = (() => {
         const dueDateDiv = document.createElement('div')
         dueDateDiv.classList.add('due-date')
         renderTaskDueDate(task, dueDateDiv)
-
         taskDetails.append(dueDateDiv)
 
         taskDetails.append(renderTaskPriority(task))
@@ -246,15 +261,13 @@ const DOM = (() => {
     }
 
     function updateTotalTodoTasksLength(){
-        const projectTitle = getProjectTitle()
-        const project = Project.getProject(projectTitle)
+        const project = Project.getProject(getProjectTitle())
         const totalTasks = document.querySelector('.total-tasks')
         totalTasks.textContent = project.todoLength
     }
 
     function updateCompletedTasksLength(){
-        const projectTitle = getProjectTitle()
-        const project = Project.getProject(projectTitle)
+        const project = Project.getProject(getProjectTitle())
         const completedTasks = document.querySelector('.total-completed-tasks')
         completedTasks.textContent = project.completedLength
     }
@@ -264,17 +277,16 @@ const DOM = (() => {
         const taskCard = node.parentElement
         const task = project.getTask(Number(taskCard.dataset.taskId))
 
-        taskCard.remove()
         task.toggleCompletion()
+        Storage.saveData()
+
+        taskCard.remove()
         updateCheckbox(task, node)
         updateTotalTodoTasksLength()
         updateCompletedTasksLength()
 
-        if (task.completed){
-            completedContainer.prepend(renderTask(task))
-        } else {
-            tasksContainer.prepend(renderTask(task))
-        }
+        task.completed ? completedContainer.prepend(renderTask(task)) :
+                         tasksContainer.prepend(renderTask(task))
     }
 
     function updateCheckbox(task, node){
@@ -284,18 +296,6 @@ const DOM = (() => {
             icon.classList.add('fa-solid', 'fa-check')
             node.append(icon)
         }
-    }
-
-    function deleteTask(node){
-        const project = Project.getProject(getProjectTitle())
-        const taskCard = node.parentElement.parentElement
-        const taskID = Number(taskCard.dataset.taskId)
-        const task = project.getTask(taskID)
-
-        project.removeTask(taskID)
-        taskCard.remove()
-
-        task.completed ? updateCompletedTasksLength() : updateTotalTodoTasksLength()
     }
 
     // FORM
@@ -466,6 +466,7 @@ const DOM = (() => {
 
     function updateTaskTitle(task, node, newTitle){
         task.setTitle(newTitle)
+        Storage.saveData()
         node.querySelector('.task-title').textContent = newTitle
     }
 
@@ -473,18 +474,23 @@ const DOM = (() => {
         const dueDate = node.querySelector('.due-date')
         dueDate.innerHTML = ''
         task.setDueDate(newDate)
+        Storage.saveData()
         renderTaskDueDate(task, dueDate)
     }
 
     function updateTaskPriority(task, node, newPriority){        
         const icon = node.querySelector('.fa-triangle-exclamation')
         icon.classList.remove(task.priority)
+
         task.setPriority(newPriority)
+        Storage.saveData()
+
         icon.classList.add(task.priority)
     }
 
     function updateTaskNotes(task, newNotes){
         task.setNotes(newNotes)
+        Storage.saveData()
     }
 
     // HELPER FUNCTIONS
@@ -505,7 +511,7 @@ const DOM = (() => {
 
 
     return {
-        initListeners
+        initListeners, renderProject, setActiveProject, renderProjectList
     }
 })()
 
