@@ -18,10 +18,6 @@ class Project {
         Project.allProjects = Project.allProjects.filter(project => project.title !== projectTitle)
     }
 
-    static setAllProjects(projects){
-        Project.allProjects = projects
-    }
-    
     setTasks(tasks){
         this.tasks = tasks
     }
