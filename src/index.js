@@ -3,25 +3,11 @@ import { DOM } from './modules/dom'
 import { Storage } from './modules/storage'
 import { Project } from './modules/project'
 import { Task } from './modules/task'
-import { format } from 'date-fns'
 
 const { projects, taskID } = Storage.loadData()
 
 if (!projects){
-    const defaultProject = new Project('default')
-
-    const exampleTask = new Task('Walk the dog')
-    exampleTask.setPriority('medium')
-
-    const exampleCompletedTask = new Task('Wash dishes')
-    exampleCompletedTask.toggleCompletion()
-    exampleCompletedTask.setDueDate(format(new Date(), 'yyyy-MM-dd'))
-
-    const clickMeTask = new Task('Click me!')
-    clickMeTask.setPriority('low')
-    clickMeTask.setNotes('Hello :) You can update the title, due date, and priority. You can also add notes.')
-
-    defaultProject.setTasks([exampleTask, exampleCompletedTask, clickMeTask])
+    const defaultProject = Storage.populateStorage()
 
     DOM.renderProject(defaultProject)
     DOM.setActiveProject(document.querySelector('.project'))
