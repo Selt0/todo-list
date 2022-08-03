@@ -20,7 +20,8 @@ Users should be able to:
 ### Screenshot/Video
 
 
-https://user-images.githubusercontent.com/23282172/182670758-8cfe0e75-5955-4451-87cc-1efc73a6460e.mp4
+https://user-images.githubusercontent.com/23282172/182672453-fa47fcc0-bd1d-49c1-ae00-461ee7978cfe.mp4
+
 
 
 ### Links
