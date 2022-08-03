@@ -19,7 +19,9 @@ Users should be able to:
 
 ### Screenshot/Video
 
-![](https://user-images.githubusercontent.com/23282172/182669963-ad7015c6-8c3b-4161-be00-03f5ab3de5e0.mp4)
+
+https://user-images.githubusercontent.com/23282172/182670758-8cfe0e75-5955-4451-87cc-1efc73a6460e.mp4
+
 
 ### Links
 
